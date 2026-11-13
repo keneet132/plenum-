@@ -10,10 +10,11 @@
 
 
   <br>
-
   <div>
     <b>Plenum</b> is a lightweight, zero-dependency peer-to-peer virtual LAN bridge written in Go. It establishes direct connections between machines behind restrictive CGNAT firewalls using <a href="https://github.com/WireGuard/wireguard-go">wireguard-go</a> and <a href="https://github.com/pion/stun">pion/stun</a>, without requiring an external VPS or central relay server.
   </div>
+  
+currently plenum only supports 1 to 1 connection.
 
   <br>
 
