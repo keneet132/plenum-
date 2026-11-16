@@ -35,6 +35,10 @@ currently plenum only supports 1 to 1 connection.
 
 - Go 1.21 or higher
 - Linux OS with `iproute2` installed
+- Windows:`wintun.dll` (from [wintun.net](https://www.wintun.net/)) placed in the same directory as the compiled binary
+
+### Pre-built Binaries (Windows)
+Download `plenum-windows-amd64.zip` from the [Releases](https://github.com/keneet132/plenum-/releases) page and extract it. Ensure `plenum.exe` and `wintun.dll` remain in the same folder.
 
 ### Build from source
 
@@ -46,16 +50,19 @@ go build -o plenum .
 
 ## Usage
 
-Since Plenum creates a virtual TUN interface, all commands must be run with `sudo`.
+since plenum creates a virtual TUN interface, all commands must be run with `sudo`and administrator powershell on windows
 
 ### Start the host
 
 The host starts first and listens for incoming peer handshakes.
-
+Linux:
 ```bash
-sudo ./plenum --mode host
+sudo ./plenum --mode host 
 ```
-
+Windos: 
+```bash
+.\plenum.exe --mode host
+```
 The host will output its public IP, public port, and Base64-encoded WireGuard public key.
 
 Share these details securely with your peer.
@@ -64,8 +71,14 @@ Share these details securely with your peer.
 
 Once you have the host's endpoint, connect from the client machine:
 
+Linux:
 ```bash
 sudo ./plenum --mode client --peer <HOST_IP>:<HOST_PORT>
+```
+
+Windows:
+```bash
+.\plenum.exe --mode client --peer <HOST_IP>:<HOST_PORT>
 ```
 
 When prompted with `Enter Host's Public Key:`, paste the host's Base64-encoded public key.
@@ -77,19 +90,26 @@ This triggers the UDP hole punching process and cryptographic handshake.
 To enable packet routing across the bridge, assign local IP addresses to the `plenum0` interface on both machines.
 
 **On the host machine:**
-
+Linux:
 ```bash
 sudo ip addr add 10.0.0.1/24 dev plenum0
 sudo ip link set dev plenum0 up
 ```
+Windows:
+```bash
+New-NetIPAddress -InterfaceAlias "plenum0" -IPAddress 10.0.0.1 -PrefixLength 24
+```
 
 **On the client machine:**
-
+Linux:
 ```bash
 sudo ip addr add 10.0.0.2/24 dev plenum0
 sudo ip link set dev plenum0 up
 ```
-
+Windows:
+```bash
+New-NetIPAddress -InterfaceAlias "plenum0" -IPAddress 10.0.0.2 -PrefixLength 24
+```
 ### Verify connectivity
 
 Test the tunnel using `ping`.
